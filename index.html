@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>yoyo | Magician</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Noto+Serif+JP:wght@300;400&family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --white:#ffffff;--off-white:#faf8f5;--light:#f2ede6;--light-2:#e8e0d4;
+    --gold:#b8922a;--gold-lt:#d4a83a;--gold-dk:#8a6e20;
+    --red:#9b1c1c;--red-lt:#c0392b;
+    --ink:#1a1510;--ink-soft:#3a3020;--muted:#8a7f70;--muted-lt:#b0a898;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--white);color:var(--ink);font-family:'Noto Sans JP',sans-serif;font-weight:300;line-height:1.8;overflow-x:hidden;}
+
+  .lang-bar{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--ink);padding:0.4rem 3rem;display:flex;justify-content:flex-end;gap:1.5rem;}
+  .lang-btn{font-size:0.62rem;letter-spacing:0.15em;color:var(--muted-lt);cursor:pointer;border:none;background:none;transition:color 0.3s;padding:0;}
+  .lang-btn.active,.lang-btn:hover{color:var(--gold-lt);}
+  .lang-sep{font-size:0.62rem;color:var(--muted);line-height:1.6;}
+
+  nav{position:fixed;top:28px;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1rem 3rem;background:rgba(255,255,255,0.96);backdrop-filter:blur(16px);border-bottom:1px solid rgba(184,146,42,0.2);}
+  .nav-logo{font-family:'Playfair Display',serif;font-size:1.3rem;letter-spacing:0.22em;color:var(--ink);text-decoration:none;}
+  .nav-logo span{color:var(--gold);}
+  .nav-links{display:flex;gap:2rem;list-style:none;}
+  .nav-links a{font-size:0.68rem;letter-spacing:0.12em;color:var(--muted);text-decoration:none;transition:color 0.3s;}
+  .nav-links a:hover{color:var(--gold);}
+
+  #hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:stretch;padding-top:80px;position:relative;}
+  .hero-left{display:flex;flex-direction:column;justify-content:center;padding:5rem 3rem;position:relative;z-index:2;}
+  .hero-right{position:relative;overflow:hidden;}
+  .hero-right img{width:100%;height:100%;object-fit:cover;object-position:30% center;}
+  .hero-right::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,rgba(255,255,255,0.15) 0%,transparent 30%),linear-gradient(to top,rgba(26,21,16,0.25) 0%,transparent 40%);}
+
+  .hero-tag{font-size:0.6rem;letter-spacing:0.32em;color:var(--red);display:flex;align-items:center;gap:0.8rem;margin-bottom:1.6rem;}
+  .hero-tag::before{content:'';width:2rem;height:1px;background:var(--red);}
+  h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,3.8vw,3.2rem);font-weight:400;line-height:1.25;color:var(--ink);margin-bottom:0.6rem;}
+  h1 em{font-style:italic;color:var(--gold);}
+  .hero-sub{font-size:0.78rem;color:var(--muted);letter-spacing:0.06em;margin-bottom:2.8rem;font-family:'Noto Serif JP',serif;}
+  .hero-cta{display:inline-flex;align-items:center;gap:0.8rem;padding:0.85rem 2rem;background:var(--ink);color:var(--gold-lt);text-decoration:none;font-size:0.72rem;letter-spacing:0.15em;transition:all 0.35s;width:fit-content;border:1px solid var(--ink);}
+  .hero-cta:hover{background:var(--gold);border-color:var(--gold);color:var(--white);}
+  .hero-cta-arrow{transition:transform 0.3s;}
+  .hero-cta:hover .hero-cta-arrow{transform:translateX(5px);}
+
+  .hero-sns{position:absolute;right:2.5rem;bottom:3rem;display:flex;flex-direction:column;gap:0.9rem;align-items:center;z-index:10;}
+  .hero-sns-line{width:1px;height:2rem;background:rgba(255,255,255,0.4);}
+  .hero-sns a{color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.3s;}
+  .hero-sns a:hover{color:var(--gold-lt);}
+
+  .banner{background:var(--ink);padding:3.5rem 3rem;display:flex;align-items:center;gap:4rem;overflow:hidden;position:relative;}
+  .banner::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--red),var(--gold));}
+  .banner-img{width:220px;height:280px;object-fit:cover;object-position:center 15%;flex-shrink:0;}
+  .banner-label{font-size:0.58rem;letter-spacing:0.35em;color:var(--gold);margin-bottom:0.8rem;display:flex;align-items:center;gap:0.6rem;}
+  .banner-label::after{content:'';width:2rem;height:1px;background:var(--gold-dk);}
+  .banner-title{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,2.5vw,2rem);font-weight:400;color:var(--off-white);line-height:1.3;margin-bottom:1rem;}
+  .banner-title em{font-style:italic;color:var(--gold-lt);}
+  .banner-desc{font-size:0.82rem;color:var(--muted-lt);line-height:1.9;max-width:480px;}
+  .banner-badges{display:flex;gap:0.8rem;flex-wrap:wrap;margin-top:1.4rem;}
+  .banner-badge{font-size:0.62rem;letter-spacing:0.1em;color:var(--gold);border:1px solid rgba(184,146,42,0.3);padding:0.3rem 0.8rem;}
+
+  section{padding:6rem 3rem;}
+  .section-inner{max-width:1000px;margin:0 auto;}
+  .section-header{margin-bottom:3.5rem;}
+  .section-label{font-size:0.58rem;letter-spacing:0.35em;color:var(--gold);display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem;}
+  .section-label::after{content:'';width:2rem;height:1px;background:var(--gold-dk);opacity:0.5;}
+  .section-title{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,3vw,2.4rem);font-weight:400;color:var(--ink);line-height:1.2;}
+
+  #profile{background:var(--off-white);border-top:1px solid var(--light-2);border-bottom:1px solid var(--light-2);}
+  .profile-grid{display:grid;grid-template-columns:280px 1fr;gap:4rem;align-items:start;}
+  .profile-text p{font-size:0.88rem;color:var(--ink-soft);line-height:2.1;margin-bottom:1.2rem;}
+  .profile-badges{display:flex;flex-direction:column;margin-top:1.8rem;}
+  .profile-badge{display:flex;align-items:flex-start;gap:1.2rem;padding:1.2rem 0;border-bottom:1px solid var(--light-2);}
+  .profile-badge:first-child{border-top:1px solid var(--light-2);}
+  .badge-diamond{width:9px;height:9px;background:var(--red);transform:rotate(45deg);flex-shrink:0;margin-top:0.45rem;}
+  .badge-content-title{font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--ink);margin-bottom:0.2rem;}
+  .badge-content-desc{font-size:0.75rem;color:var(--muted);line-height:1.7;}
+
+  #achievements{background:var(--white);}
+  .achievement-item{display:grid;grid-template-columns:150px 1fr;align-items:baseline;gap:2rem;padding:1.3rem 0;border-bottom:1px solid var(--light-2);}
+  .achievement-item:first-child{border-top:1px solid var(--light-2);}
+  .achievement-label{font-size:0.58rem;letter-spacing:0.18em;color:var(--red);}
+  .achievement-name{font-family:'Noto Serif JP',serif;font-size:0.88rem;color:var(--ink);line-height:1.7;}
+
+  /* Experience（感情3ゾーン） */
+  #emotions{background:var(--white);}
+  .emotion-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem;}
+  .emotion-card{border:1px solid var(--light-2);overflow:hidden;}
+  .emotion-img-wrap{height:220px;overflow:hidden;}
+  .emotion-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s;}
+  .emotion-card:hover .emotion-img-wrap img{transform:scale(1.04);}
+  .emotion-body{padding:1.2rem;}
+  .emotion-tag{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:400;color:var(--ink);margin-bottom:0.6rem;}
+  .emotion-text{font-size:0.78rem;color:var(--muted);line-height:1.8;}
+
+  #gallery{background:var(--light);padding:6rem 0;}
+  #gallery .section-header{padding:0 3rem;}
+  .gallery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:3px;max-width:800px;margin:0 auto;}
+  .gallery-item{aspect-ratio:4/3;overflow:hidden;position:relative;background:var(--light-2);display:flex;align-items:center;justify-content:center;}
+  .gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s ease;}
+  .gallery-item:hover img{transform:scale(1.04);}
+
+  #pricing{background:var(--off-white);}
+  .pricing-wrap{max-width:600px;margin:0 auto;}
+  .price-card{border:1px solid var(--light-2);padding:3rem;background:var(--white);position:relative;}
+  .price-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(180deg,var(--red),var(--gold),transparent);}
+  .price-amount{font-family:'Playfair Display',serif;font-size:3rem;font-weight:400;color:var(--ink);line-height:1;margin-bottom:0.3rem;}
+  .price-unit{font-size:0.72rem;color:var(--muted);letter-spacing:0.1em;margin-bottom:2.5rem;}
+  .price-factors{display:flex;flex-direction:column;}
+  .price-factor{display:flex;align-items:flex-start;gap:1.2rem;padding:1rem 0;border-top:1px solid var(--light-2);}
+  .factor-mark{width:6px;height:6px;background:var(--red);transform:rotate(45deg);flex-shrink:0;margin-top:0.5rem;}
+  .factor-info-name{font-size:0.82rem;color:var(--ink);margin-bottom:0.15rem;}
+  .factor-info-desc{font-size:0.72rem;color:var(--muted);}
+  .price-note{font-size:0.68rem;color:var(--muted);line-height:1.9;margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid var(--light-2);}
+
+  #contact{background:var(--white);}
+  .contact-wrap{max-width:540px;margin:0 auto;}
+  .contact-desc{font-size:0.85rem;color:var(--muted);margin-bottom:2.5rem;line-height:2;}
+  .form-group{margin-bottom:1.3rem;}
+  .form-label{display:block;font-size:0.6rem;letter-spacing:0.2em;color:var(--gold-dk);margin-bottom:0.5rem;}
+  .form-input,.form-textarea{width:100%;background:var(--off-white);border:none;border-bottom:1px solid var(--light-2);color:var(--ink);font-family:'Noto Sans JP',sans-serif;font-size:0.85rem;font-weight:300;padding:0.7rem 0;outline:none;transition:border-color 0.3s;-webkit-appearance:none;border-radius:0;}
+  .form-input:focus,.form-textarea:focus{border-bottom-color:var(--gold);}
+  .form-textarea{min-height:100px;resize:vertical;border:1px solid var(--light-2);padding:0.7rem;margin-top:0.3rem;background:var(--off-white);}
+  .form-textarea:focus{border-color:var(--gold);}
+  .form-submit{width:100%;padding:1rem;background:var(--ink);border:1px solid var(--ink);color:var(--gold-lt);font-family:'Noto Sans JP',sans-serif;font-size:0.72rem;letter-spacing:0.22em;cursor:pointer;transition:all 0.35s;margin-top:0.8rem;}
+  .form-submit:hover{background:var(--gold);border-color:var(--gold);color:var(--white);}
+
+  footer{background:var(--ink);padding:2rem 3rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+  .footer-logo{font-family:'Playfair Display',serif;font-size:0.9rem;letter-spacing:0.22em;color:var(--gold);}
+  .footer-text{font-size:0.62rem;color:var(--muted);letter-spacing:0.08em;}
+
+  .fade-in{opacity:0;transform:translateY(16px);transition:opacity 0.75s ease,transform 0.75s ease;}
+  .fade-in.visible{opacity:1;transform:translateY(0);}
+  .hidden{display:none!important;}
+
+  /* INTRO */
+  #intro-ui{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0a0806;transition:opacity 1s ease;}
+  #intro-ui.fadeout{opacity:0;pointer-events:none;}
+  #intro-bg-canvas{position:absolute;inset:0;pointer-events:none;}
+
+  #intro-glow{
+    position:fixed;
+    top:50%;left:50%;
+    width:200vmax;height:200vmax;
+    margin-top:-100vmax;margin-left:-100vmax;
+    border-radius:50%;
+    z-index:1001;pointer-events:none;
+    opacity:0;transform:scale(0.05);
+    background:radial-gradient(circle at 50% 50%,rgba(255,255,255,0.95) 8%,rgba(255,255,255,0.7) 22%,rgba(255,255,255,0.35) 40%,rgba(255,255,255,0.1) 58%,transparent 70%);
+  }
+  #intro-glow.expand{
+    opacity:1;
+    background:radial-gradient(circle at 50% 50%,rgba(255,255,255,0.95) 8%,rgba(255,255,255,0.7) 22%,rgba(255,255,255,0.35) 40%,rgba(255,255,255,0.1) 58%,transparent 70%);
+    transform:scale(6);
+    transition:opacity 0.3s ease,transform 2.5s cubic-bezier(0.85,0,0.7,1);
+  }
+  #intro-flash{position:fixed;inset:0;z-index:1002;background:#fff;opacity:0;pointer-events:none;}
+
+  #glitter-canvas{position:fixed;inset:0;z-index:998;pointer-events:none;opacity:0;transition:opacity 1.2s ease;}
+  #glitter-canvas.show{opacity:1;}
+  #glitter-canvas.fadeout{opacity:0;transition:opacity 2.5s ease;}
+
+  .intro-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:300;letter-spacing:0.25em;color:rgba(240,232,213,0.9);margin-bottom:2rem;text-align:center;line-height:1.8;position:relative;z-index:2;}
+  .intro-title em{color:#c8a84a;font-style:normal;}
+  .intro-hint{font-size:0.72rem;letter-spacing:0.22em;color:#8a7f70;margin-top:1.5rem;animation:hint-pulse 2s ease 1.5s infinite;position:relative;z-index:2;}
+  @keyframes hint-pulse{0%,100%{opacity:0.2;}50%{opacity:1;}}
+
+  /* 懐中時計ラッパー */
+  .watch-wrap{position:relative;width:240px;height:240px;cursor:pointer;z-index:2;}
+  .watch-wrap svg{width:240px;height:240px;overflow:visible;}
+
+  /* 内部歯車アニメ（通常：ゆっくり） */
+  /* durationはJS側で動的に変更して加速させる */
+  .wg1{animation:wcw  16s linear infinite;transform-box:fill-box;transform-origin:center;}
+  .wg2{animation:wccw 11s linear infinite;transform-box:fill-box;transform-origin:center;}
+  .wg3{animation:wcw   8s linear infinite;transform-box:fill-box;transform-origin:center;}
+  .wg4{animation:wccw  6s linear infinite;transform-box:fill-box;transform-origin:center;}
+  .wg5{animation:wcw  13s linear infinite;transform-box:fill-box;transform-origin:center;}
+  .wg6{animation:wccw  9s linear infinite;transform-box:fill-box;transform-origin:center;}
+  .wg7{animation:wcw   7s linear infinite;transform-box:fill-box;transform-origin:center;}
+  .wg8{animation:wccw  5s linear infinite;transform-box:fill-box;transform-origin:center;}
+  .wg9{animation:wcw   4s linear infinite;transform-box:fill-box;transform-origin:center;}
+  @keyframes wcw {to{transform:rotate( 360deg);}}
+  @keyframes wccw{to{transform:rotate(-360deg);}}
+
+  /* TV実績バー */
+  .tv-bar{background:var(--ink);padding:0.9rem 3rem;border-bottom:1px solid rgba(184,146,42,0.15);}
+  .tv-bar-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;}
+  .tv-bar-label{font-size:0.55rem;letter-spacing:0.3em;color:var(--gold-dk);flex-shrink:0;}
+  .tv-bar-items{display:flex;align-items:center;gap:0.8rem;flex-wrap:nowrap;}
+  .tv-item{font-family:'Playfair Display',serif;font-size:0.78rem;color:var(--gold-lt);letter-spacing:0.06em;white-space:nowrap;}
+  .tv-sep{color:var(--red);font-size:0.55rem;flex-shrink:0;}
+
+  /* 3つの強み */
+  #strengths{background:var(--white);border-top:1px solid var(--light-2);}
+  .strength-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem;}
+  .strength-card{background:var(--off-white);border:1px solid var(--light-2);padding:2.2rem 1.8rem;display:flex;flex-direction:column;gap:0.9rem;transition:box-shadow 0.3s,transform 0.3s;}
+  .strength-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(26,21,16,0.07);}
+  .strength-num{font-family:'Playfair Display',serif;font-size:0.62rem;letter-spacing:0.3em;color:var(--gold);}
+  .strength-icon-wrap{margin:0.3rem 0;}
+  .strength-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:400;color:var(--ink);line-height:1.5;}
+  .strength-desc{font-size:0.8rem;color:var(--muted);line-height:2;flex:1;}
+  .strength-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:0.5rem;}
+  .strength-tag{font-size:0.6rem;letter-spacing:0.1em;color:var(--red);border:1px solid rgba(155,28,28,0.2);padding:3px 8px;background:rgba(155,28,28,0.04);}
+
+  /* お客様の声 */
+  #reviews{background:var(--off-white);}
+  .review-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem;}
+  .review-card{background:var(--white);border:1px solid var(--light-2);padding:1.5rem;display:flex;flex-direction:column;gap:0.8rem;}
+  .review-quote{font-size:1.2rem;color:var(--gold);}
+  .review-text{font-family:'Noto Serif JP',serif;font-size:0.85rem;color:var(--ink-soft);line-height:1.9;flex:1;}
+  .review-author{font-size:0.68rem;color:var(--muted);letter-spacing:0.06em;padding-top:0.8rem;border-top:1px solid var(--light-2);}
+
+  /* ハンバーガーボタン（PC非表示） */
+  .nav-hamburger{display:none;}
+
+  @media(max-width:768px){
+    .lang-bar{padding:0.4rem 1.5rem;}
+    nav{padding:0.9rem 1.5rem;top:28px;}
+
+    /* ハンバーガーボタン */
+    .nav-hamburger{
+      display:flex;flex-direction:column;justify-content:space-between;
+      width:24px;height:18px;
+      background:none;border:none;cursor:pointer;padding:0;z-index:110;
+    }
+    .nav-hamburger span{
+      display:block;width:100%;height:1.5px;
+      background:var(--gold);
+      transition:transform 0.3s, opacity 0.3s;
+    }
+    .nav-hamburger.open span:nth-child(1){transform:translateY(8.25px) rotate(45deg);}
+    .nav-hamburger.open span:nth-child(2){opacity:0;}
+    .nav-hamburger.open span:nth-child(3){transform:translateY(-8.25px) rotate(-45deg);}
+
+    /* ドロワーメニュー */
+    .nav-links{
+      display:none;
+      position:fixed;
+      top:0;left:0;right:0;bottom:0;
+      background:rgba(26,21,16,0.97);
+      flex-direction:column;
+      align-items:center;justify-content:center;
+      gap:2.5rem;
+      z-index:105;
+      list-style:none;
+    }
+    .nav-links.open{display:flex;}
+    .nav-links a{
+      font-size:1.1rem;
+      letter-spacing:0.15em;
+      color:var(--gold-lt);
+    }
+    .nav-links a:hover{color:var(--gold);}
+    #hero{grid-template-columns:1fr;padding-top:72px;}
+    .hero-right{min-height:55vw;}
+    .hero-left{padding:3rem 1.5rem;}
+    .banner{flex-direction:column;padding:2.5rem 1.5rem;gap:2rem;}
+    .banner-img{width:100%;height:220px;}
+    section{padding:4rem 1.5rem;}
+    #gallery{padding:4rem 0;}
+    #gallery .section-header{padding:0 1.5rem;}
+    .gallery-grid{grid-template-columns:repeat(2,1fr);}
+    .profile-grid{grid-template-columns:1fr;gap:2.5rem;}
+    .achievement-item{grid-template-columns:90px 1fr;gap:1rem;}
+    footer{padding:1.5rem;}
+    .tv-bar{padding:0.8rem 1.5rem;}
+    .tv-bar-inner{flex-direction:row;align-items:center;gap:0.8rem;flex-wrap:wrap;}
+    .emotion-grid{grid-template-columns:1fr;}
+    .review-grid{grid-template-columns:1fr;}
+  /* 中間CTA */
+  .mid-cta{background:var(--ink);padding:4rem 3rem;}
+  .mid-cta-inner{max-width:600px;margin:0 auto;text-align:center;}
+  .mid-cta-text{font-family:'Playfair Display',serif;font-size:clamp(1.3rem,2.5vw,1.8rem);font-weight:400;color:var(--cream);margin-bottom:0.8rem;}
+  .mid-cta-sub{font-size:0.8rem;color:var(--muted-lt);margin-bottom:2rem;line-height:1.9;}
+  .mid-cta-btn{display:inline-block;padding:0.9rem 2.5rem;border:1px solid var(--gold);color:var(--gold);text-decoration:none;font-size:0.75rem;letter-spacing:0.15em;transition:all 0.3s;}
+  .mid-cta-btn:hover{background:var(--gold);color:var(--ink);}
+
+  /* くらしのマーケット バッジ */
+  .review-badge{display:flex;align-items:center;gap:0.8rem;margin-bottom:2rem;}
+  .review-badge-score{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;}
+  .review-badge-text{font-size:0.72rem;color:var(--muted);letter-spacing:0.06em;}
+
+    .mid-cta{padding:3rem 1.5rem;}
+    .strength-grid{grid-template-columns:1fr;gap:0;}
+    .strength-card{border-bottom:1px solid rgba(184,146,42,0.1);}
+  }
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro-ui">
+  <canvas id="intro-bg-canvas"></canvas>
+  <p class="intro-title">yoyo（ヨーヨー）の<br>ウェブサイトへ<em>ようこそ</em></p>
+
+  <div class="watch-wrap" id="intro-sigil">
+    <svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- 円形クリップで内部のみ表示 -->
+        <clipPath id="watch-clip">
+          <circle cx="90" cy="90" r="76"/>
+        </clipPath>
+      </defs>
+
+      <!-- ── 外枠（静止）：懐中時計の蓋 ── -->
+      <!-- 最外リング -->
+      <circle cx="90" cy="90" r="86" fill="none" stroke="rgba(184,146,42,0.35)" stroke-width="1.2"/>
+      <!-- メインボディリング -->
+      <circle cx="90" cy="90" r="80" fill="rgba(14,11,8,0.98)" stroke="rgba(184,146,42,0.55)" stroke-width="2"/>
+      <!-- 内側装飾リング -->
+      <circle cx="90" cy="90" r="77" fill="none" stroke="rgba(184,146,42,0.2)" stroke-width="0.5"/>
+      <!-- 外枠の目盛り（12時位置） -->
+      <line x1="90" y1="10" x2="90" y2="18" stroke="rgba(184,146,42,0.6)" stroke-width="1.5"/>
+      <line x1="90" y1="162" x2="90" y2="170" stroke="rgba(184,146,42,0.6)" stroke-width="1.5"/>
+      <line x1="10" y1="90" x2="18" y2="90" stroke="rgba(184,146,42,0.6)" stroke-width="1.5"/>
+      <line x1="162" y1="90" x2="170" y2="90" stroke="rgba(184,146,42,0.6)" stroke-width="1.5"/>
+      <!-- 細い目盛り -->
+      <line x1="90" y1="10" x2="90" y2="15" stroke="rgba(184,146,42,0.3)" stroke-width="0.6" transform="rotate(30 90 90)"/>
+      <line x1="90" y1="10" x2="90" y2="15" stroke="rgba(184,146,42,0.3)" stroke-width="0.6" transform="rotate(60 90 90)"/>
+      <line x1="90" y1="10" x2="90" y2="15" stroke="rgba(184,146,42,0.3)" stroke-width="0.6" transform="rotate(120 90 90)"/>
+      <line x1="90" y1="10" x2="90" y2="15" stroke="rgba(184,146,42,0.3)" stroke-width="0.6" transform="rotate(150 90 90)"/>
+      <line x1="90" y1="10" x2="90" y2="15" stroke="rgba(184,146,42,0.3)" stroke-width="0.6" transform="rotate(210 90 90)"/>
+      <line x1="90" y1="10" x2="90" y2="15" stroke="rgba(184,146,42,0.3)" stroke-width="0.6" transform="rotate(240 90 90)"/>
+      <line x1="90" y1="10" x2="90" y2="15" stroke="rgba(184,146,42,0.3)" stroke-width="0.6" transform="rotate(300 90 90)"/>
+      <line x1="90" y1="10" x2="90" y2="15" stroke="rgba(184,146,42,0.3)" stroke-width="0.6" transform="rotate(330 90 90)"/>
+      <!-- リューズ（ねじ巻き） -->
+      <rect x="168" y="86" width="10" height="8" rx="2" fill="rgba(14,11,8,0.98)" stroke="rgba(184,146,42,0.5)" stroke-width="1"/>
+      <line x1="169" y1="88" x2="177" y2="88" stroke="rgba(184,146,42,0.4)" stroke-width="0.5"/>
+      <line x1="169" y1="90" x2="177" y2="90" stroke="rgba(184,146,42,0.4)" stroke-width="0.5"/>
+      <line x1="169" y1="92" x2="177" y2="92" stroke="rgba(184,146,42,0.4)" stroke-width="0.5"/>
+
+      <!-- ── 内部機械（クリップ内） ── -->
+      <g clip-path="url(#watch-clip)">
+        <!-- 内部背景 -->
+        <circle cx="90" cy="90" r="76" fill="rgba(18,14,10,0.97)"/>
+        <!-- 内部プレートのサークル -->
+        <circle cx="90" cy="90" r="72" fill="none" stroke="rgba(184,146,42,0.07)" stroke-width="0.4"/>
+        <circle cx="90" cy="90" r="55" fill="none" stroke="rgba(184,146,42,0.05)" stroke-width="0.4"/>
+
+        <!-- コネクティングロッド（静止・背景構造） -->
+        <line x1="78" y1="90" x2="120" y2="62" stroke="rgba(184,146,42,0.1)" stroke-width="0.6"/>
+        <line x1="78" y1="90" x2="118" y2="118" stroke="rgba(184,146,42,0.1)" stroke-width="0.6"/>
+        <line x1="78" y1="90" x2="52" y2="55"  stroke="rgba(184,146,42,0.08)" stroke-width="0.5"/>
+        <line x1="78" y1="90" x2="50" y2="122" stroke="rgba(184,146,42,0.08)" stroke-width="0.5"/>
+        <line x1="90" y1="42" x2="120" y2="62" stroke="rgba(184,146,42,0.08)" stroke-width="0.5"/>
+        <line x1="52" y1="55" x2="50" y2="122" stroke="rgba(184,146,42,0.07)" stroke-width="0.4"/>
+        <line x1="120" y1="62" x2="130" y2="100" stroke="rgba(184,146,42,0.08)" stroke-width="0.5"/>
+        <line x1="130" y1="100" x2="118" y2="118" stroke="rgba(184,146,42,0.08)" stroke-width="0.5"/>
+
+        <!-- 歯車1：メイン大歯車（中央やや左） -->
+        <g class="wg1">
+          <circle cx="78" cy="90" r="32" fill="rgba(20,16,10,0.95)" stroke="rgba(184,146,42,0.4)" stroke-width="0.8"/>
+          <circle cx="78" cy="90" r="27" fill="none" stroke="rgba(184,146,42,0.15)" stroke-width="0.4"/>
+          <circle cx="78" cy="90" r="20" fill="none" stroke="rgba(184,146,42,0.08)" stroke-width="0.3"/>
+          <!-- 歯 16本 -->
+          <rect x="76.5" y="56" width="3" height="6" rx="0.8" fill="rgba(184,146,42,0.55)"/>
+          <rect x="76.5" y="56" width="3" height="6" rx="0.8" fill="rgba(184,146,42,0.55)" transform="rotate(22.5 78 90)"/>
+          <rect x="76.5" y="56" width="3" height="6" rx="0.8" fill="rgba(184,146,42,0.55)" transform="rotate(45 78 90)"/>
+          <rect x="76.5" y="56" width="3" height="6" rx="0.8" fill="rgba(184,146,42,0.55)" transform="rotate(67.5 78 90)"/>
+          <rect x="76.5" y="56" width="3" height="6" rx="0.8" fill="rgba(184,146,42,0.55)" transform="rotate(90 78 90)"/>
+          <rect x="76.5" y="56" width="3" height="6" rx="0.8" fill="rgba(184,146,42,0.55)" transform="rotate(112.5 78 90)"/>
+          <rect x="76.5" y="56" width="3" height="6" rx="0.8" fill="rgba(184,146,42,0.55)" transform="rotate(135 78 90)"/>
+          <rect x="76.5" y="56" width="3" height="6" rx="0.8" fill="rgba(184,146,42,0.55)" transform="rotate(157.5 78 90)"/>
+          <rect x="76.5" y="56" width="3" height="6" rx="0.8" fill="rgba(184,146,42,0.55)" transform="rotate(180 78 90)"/>
+          <rect x="76.5" y="56" width="3" height="6" rx="0.8" fill="rgba(184,146,42,0.55)" transform="rotate(202.5 78 90)"/>
+          <rect x="76.5" y="56" width="3" height="6" rx="0.8" fill="rgba(184,146,42,0.55)" transform="rotate(225 78 90)"/>
+          <rect x="76.5" y="56" width="3" height="6" rx="0.8" fill="rgba(184,146,42,0.55)" transform="rotate(247.5 78 90)"/>
+          <rect x="76.5" y="56" width="3" height="6" rx="0.8" fill="rgba(184,146,42,0.55)" transform="rotate(270 78 90)"/>
+          <rect x="76.5" y="56" width="3" height="6" rx="0.8" fill="rgba(184,146,42,0.55)" transform="rotate(292.5 78 90)"/>
+          <rect x="76.5" y="56" width="3" height="6" rx="0.8" fill="rgba(184,146,42,0.55)" transform="rotate(315 78 90)"/>
+          <rect x="76.5" y="56" width="3" height="6" rx="0.8" fill="rgba(184,146,42,0.55)" transform="rotate(337.5 78 90)"/>
+          <!-- スポーク6本 -->
+          <line x1="78" y1="63" x2="78" y2="90" stroke="rgba(184,146,42,0.28)" stroke-width="1.2"/>
+          <line x1="78" y1="63" x2="78" y2="90" stroke="rgba(184,146,42,0.28)" stroke-width="1.2" transform="rotate(60 78 90)"/>
+          <line x1="78" y1="63" x2="78" y2="90" stroke="rgba(184,146,42,0.28)" stroke-width="1.2" transform="rotate(120 78 90)"/>
+          <line x1="78" y1="63" x2="78" y2="90" stroke="rgba(184,146,42,0.28)" stroke-width="1.2" transform="rotate(180 78 90)"/>
+          <line x1="78" y1="63" x2="78" y2="90" stroke="rgba(184,146,42,0.28)" stroke-width="1.2" transform="rotate(240 78 90)"/>
+          <line x1="78" y1="63" x2="78" y2="90" stroke="rgba(184,146,42,0.28)" stroke-width="1.2" transform="rotate(300 78 90)"/>
+          <circle cx="78" cy="90" r="6" fill="rgba(184,146,42,0.5)"/>
+          <circle cx="78" cy="90" r="3" fill="rgba(255,220,100,0.7)"/>
+        </g>
+
+        <!-- 歯車2：右上 -->
+        <g class="wg2">
+          <circle cx="120" cy="62" r="18" fill="rgba(20,16,10,0.95)" stroke="rgba(184,146,42,0.38)" stroke-width="0.7"/>
+          <circle cx="120" cy="62" r="14" fill="none" stroke="rgba(184,146,42,0.12)" stroke-width="0.3"/>
+          <rect x="118.5" y="43" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.5)"/>
+          <rect x="118.5" y="43" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.5)" transform="rotate(30 120 62)"/>
+          <rect x="118.5" y="43" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.5)" transform="rotate(60 120 62)"/>
+          <rect x="118.5" y="43" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.5)" transform="rotate(90 120 62)"/>
+          <rect x="118.5" y="43" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.5)" transform="rotate(120 120 62)"/>
+          <rect x="118.5" y="43" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.5)" transform="rotate(150 120 62)"/>
+          <rect x="118.5" y="43" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.5)" transform="rotate(180 120 62)"/>
+          <rect x="118.5" y="43" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.5)" transform="rotate(210 120 62)"/>
+          <rect x="118.5" y="43" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.5)" transform="rotate(240 120 62)"/>
+          <rect x="118.5" y="43" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.5)" transform="rotate(270 120 62)"/>
+          <rect x="118.5" y="43" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.5)" transform="rotate(300 120 62)"/>
+          <rect x="118.5" y="43" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.5)" transform="rotate(330 120 62)"/>
+          <!-- スポーク4本 -->
+          <line x1="120" y1="48" x2="120" y2="62" stroke="rgba(184,146,42,0.22)" stroke-width="0.9" transform="rotate(0 120 62)"/>
+          <line x1="120" y1="48" x2="120" y2="62" stroke="rgba(184,146,42,0.22)" stroke-width="0.9" transform="rotate(90 120 62)"/>
+          <line x1="120" y1="48" x2="120" y2="62" stroke="rgba(184,146,42,0.22)" stroke-width="0.9" transform="rotate(180 120 62)"/>
+          <line x1="120" y1="48" x2="120" y2="62" stroke="rgba(184,146,42,0.22)" stroke-width="0.9" transform="rotate(270 120 62)"/>
+          <circle cx="120" cy="62" r="4" fill="rgba(184,146,42,0.5)"/>
+          <circle cx="120" cy="62" r="2" fill="rgba(255,220,100,0.6)"/>
+        </g>
+
+        <!-- 歯車3：右下 -->
+        <g class="wg3">
+          <circle cx="118" cy="118" r="16" fill="rgba(20,16,10,0.95)" stroke="rgba(184,146,42,0.35)" stroke-width="0.7"/>
+          <circle cx="118" cy="118" r="12" fill="none" stroke="rgba(184,146,42,0.1)" stroke-width="0.3"/>
+          <rect x="116.5" y="101" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.48)"/>
+          <rect x="116.5" y="101" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.48)" transform="rotate(36 118 118)"/>
+          <rect x="116.5" y="101" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.48)" transform="rotate(72 118 118)"/>
+          <rect x="116.5" y="101" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.48)" transform="rotate(108 118 118)"/>
+          <rect x="116.5" y="101" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.48)" transform="rotate(144 118 118)"/>
+          <rect x="116.5" y="101" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.48)" transform="rotate(180 118 118)"/>
+          <rect x="116.5" y="101" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.48)" transform="rotate(216 118 118)"/>
+          <rect x="116.5" y="101" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.48)" transform="rotate(252 118 118)"/>
+          <rect x="116.5" y="101" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.48)" transform="rotate(288 118 118)"/>
+          <rect x="116.5" y="101" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.48)" transform="rotate(324 118 118)"/>
+          <line x1="118" y1="103" x2="118" y2="118" stroke="rgba(184,146,42,0.2)" stroke-width="0.9" transform="rotate(0 118 118)"/>
+          <line x1="118" y1="103" x2="118" y2="118" stroke="rgba(184,146,42,0.2)" stroke-width="0.9" transform="rotate(120 118 118)"/>
+          <line x1="118" y1="103" x2="118" y2="118" stroke="rgba(184,146,42,0.2)" stroke-width="0.9" transform="rotate(240 118 118)"/>
+          <circle cx="118" cy="118" r="3.5" fill="rgba(184,146,42,0.45)"/>
+        </g>
+
+        <!-- 歯車4：左上 -->
+        <g class="wg4">
+          <circle cx="52" cy="55" r="13" fill="rgba(20,16,10,0.95)" stroke="rgba(184,146,42,0.33)" stroke-width="0.6"/>
+          <circle cx="52" cy="55" r="9" fill="none" stroke="rgba(184,146,42,0.1)" stroke-width="0.3"/>
+          <rect x="50.5" y="41" width="3" height="5" rx="0.6" fill="rgba(184,146,42,0.45)"/>
+          <rect x="50.5" y="41" width="3" height="5" rx="0.6" fill="rgba(184,146,42,0.45)" transform="rotate(40 52 55)"/>
+          <rect x="50.5" y="41" width="3" height="5" rx="0.6" fill="rgba(184,146,42,0.45)" transform="rotate(80 52 55)"/>
+          <rect x="50.5" y="41" width="3" height="5" rx="0.6" fill="rgba(184,146,42,0.45)" transform="rotate(120 52 55)"/>
+          <rect x="50.5" y="41" width="3" height="5" rx="0.6" fill="rgba(184,146,42,0.45)" transform="rotate(160 52 55)"/>
+          <rect x="50.5" y="41" width="3" height="5" rx="0.6" fill="rgba(184,146,42,0.45)" transform="rotate(200 52 55)"/>
+          <rect x="50.5" y="41" width="3" height="5" rx="0.6" fill="rgba(184,146,42,0.45)" transform="rotate(240 52 55)"/>
+          <rect x="50.5" y="41" width="3" height="5" rx="0.6" fill="rgba(184,146,42,0.45)" transform="rotate(280 52 55)"/>
+          <rect x="50.5" y="41" width="3" height="5" rx="0.6" fill="rgba(184,146,42,0.45)" transform="rotate(320 52 55)"/>
+          <line x1="52" y1="43" x2="52" y2="55" stroke="rgba(184,146,42,0.2)" stroke-width="0.8" transform="rotate(0 52 55)"/>
+          <line x1="52" y1="43" x2="52" y2="55" stroke="rgba(184,146,42,0.2)" stroke-width="0.8" transform="rotate(120 52 55)"/>
+          <line x1="52" y1="43" x2="52" y2="55" stroke="rgba(184,146,42,0.2)" stroke-width="0.8" transform="rotate(240 52 55)"/>
+          <circle cx="52" cy="55" r="3.5" fill="rgba(184,146,42,0.42)"/>
+          <circle cx="52" cy="55" r="1.5" fill="rgba(255,210,80,0.5)"/>
+        </g>
+
+        <!-- 歯車5：左下 -->
+        <g class="wg5">
+          <circle cx="50" cy="122" r="14" fill="rgba(20,16,10,0.95)" stroke="rgba(184,146,42,0.35)" stroke-width="0.6"/>
+          <circle cx="50" cy="122" r="10" fill="none" stroke="rgba(184,146,42,0.1)" stroke-width="0.3"/>
+          <rect x="48.5" y="107" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.45)"/>
+          <rect x="48.5" y="107" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.45)" transform="rotate(36 50 122)"/>
+          <rect x="48.5" y="107" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.45)" transform="rotate(72 50 122)"/>
+          <rect x="48.5" y="107" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.45)" transform="rotate(108 50 122)"/>
+          <rect x="48.5" y="107" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.45)" transform="rotate(144 50 122)"/>
+          <rect x="48.5" y="107" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.45)" transform="rotate(180 50 122)"/>
+          <rect x="48.5" y="107" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.45)" transform="rotate(216 50 122)"/>
+          <rect x="48.5" y="107" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.45)" transform="rotate(252 50 122)"/>
+          <rect x="48.5" y="107" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.45)" transform="rotate(288 50 122)"/>
+          <rect x="48.5" y="107" width="3" height="5" rx="0.7" fill="rgba(184,146,42,0.45)" transform="rotate(324 50 122)"/>
+          <line x1="50" y1="109" x2="50" y2="122" stroke="rgba(184,146,42,0.18)" stroke-width="0.8" transform="rotate(0 50 122)"/>
+          <line x1="50" y1="109" x2="50" y2="122" stroke="rgba(184,146,42,0.18)" stroke-width="0.8" transform="rotate(120 50 122)"/>
+          <line x1="50" y1="109" x2="50" y2="122" stroke="rgba(184,146,42,0.18)" stroke-width="0.8" transform="rotate(240 50 122)"/>
+          <circle cx="50" cy="122" r="3.5" fill="rgba(184,146,42,0.4)"/>
+        </g>
+
+        <!-- 歯車6：上部 -->
+        <g class="wg6">
+          <circle cx="90" cy="42" r="10" fill="rgba(20,16,10,0.95)" stroke="rgba(184,146,42,0.32)" stroke-width="0.6"/>
+          <circle cx="90" cy="42" r="7" fill="none" stroke="rgba(184,146,42,0.1)" stroke-width="0.3"/>
+          <rect x="88.5" y="31" width="3" height="4" rx="0.6" fill="rgba(184,146,42,0.42)"/>
+          <rect x="88.5" y="31" width="3" height="4" rx="0.6" fill="rgba(184,146,42,0.42)" transform="rotate(45 90 42)"/>
+          <rect x="88.5" y="31" width="3" height="4" rx="0.6" fill="rgba(184,146,42,0.42)" transform="rotate(90 90 42)"/>
+          <rect x="88.5" y="31" width="3" height="4" rx="0.6" fill="rgba(184,146,42,0.42)" transform="rotate(135 90 42)"/>
+          <rect x="88.5" y="31" width="3" height="4" rx="0.6" fill="rgba(184,146,42,0.42)" transform="rotate(180 90 42)"/>
+          <rect x="88.5" y="31" width="3" height="4" rx="0.6" fill="rgba(184,146,42,0.42)" transform="rotate(225 90 42)"/>
+          <rect x="88.5" y="31" width="3" height="4" rx="0.6" fill="rgba(184,146,42,0.42)" transform="rotate(270 90 42)"/>
+          <rect x="88.5" y="31" width="3" height="4" rx="0.6" fill="rgba(184,146,42,0.42)" transform="rotate(315 90 42)"/>
+          <circle cx="90" cy="42" r="2.5" fill="rgba(184,146,42,0.42)"/>
+        </g>
+
+        <!-- 歯車7：右中（新追加） -->
+        <g class="wg7">
+          <circle cx="130" cy="100" r="11" fill="rgba(20,16,10,0.95)" stroke="rgba(184,146,42,0.3)" stroke-width="0.6"/>
+          <rect x="128.5" y="88" width="3" height="4.5" rx="0.6" fill="rgba(184,146,42,0.4)"/>
+          <rect x="128.5" y="88" width="3" height="4.5" rx="0.6" fill="rgba(184,146,42,0.4)" transform="rotate(36 130 100)"/>
+          <rect x="128.5" y="88" width="3" height="4.5" rx="0.6" fill="rgba(184,146,42,0.4)" transform="rotate(72 130 100)"/>
+          <rect x="128.5" y="88" width="3" height="4.5" rx="0.6" fill="rgba(184,146,42,0.4)" transform="rotate(108 130 100)"/>
+          <rect x="128.5" y="88" width="3" height="4.5" rx="0.6" fill="rgba(184,146,42,0.4)" transform="rotate(144 130 100)"/>
+          <rect x="128.5" y="88" width="3" height="4.5" rx="0.6" fill="rgba(184,146,42,0.4)" transform="rotate(180 130 100)"/>
+          <rect x="128.5" y="88" width="3" height="4.5" rx="0.6" fill="rgba(184,146,42,0.4)" transform="rotate(216 130 100)"/>
+          <rect x="128.5" y="88" width="3" height="4.5" rx="0.6" fill="rgba(184,146,42,0.4)" transform="rotate(252 130 100)"/>
+          <rect x="128.5" y="88" width="3" height="4.5" rx="0.6" fill="rgba(184,146,42,0.4)" transform="rotate(288 130 100)"/>
+          <rect x="128.5" y="88" width="3" height="4.5" rx="0.6" fill="rgba(184,146,42,0.4)" transform="rotate(324 130 100)"/>
+          <circle cx="130" cy="100" r="3" fill="rgba(184,146,42,0.38)"/>
+        </g>
+
+        <!-- 歯車8：極小（左中・新追加） -->
+        <g class="wg8">
+          <circle cx="35" cy="88" r="8" fill="rgba(20,16,10,0.95)" stroke="rgba(184,146,42,0.28)" stroke-width="0.5"/>
+          <rect x="33.5" y="79" width="3" height="3.5" rx="0.5" fill="rgba(184,146,42,0.35)"/>
+          <rect x="33.5" y="79" width="3" height="3.5" rx="0.5" fill="rgba(184,146,42,0.35)" transform="rotate(45 35 88)"/>
+          <rect x="33.5" y="79" width="3" height="3.5" rx="0.5" fill="rgba(184,146,42,0.35)" transform="rotate(90 35 88)"/>
+          <rect x="33.5" y="79" width="3" height="3.5" rx="0.5" fill="rgba(184,146,42,0.35)" transform="rotate(135 35 88)"/>
+          <rect x="33.5" y="79" width="3" height="3.5" rx="0.5" fill="rgba(184,146,42,0.35)" transform="rotate(180 35 88)"/>
+          <rect x="33.5" y="79" width="3" height="3.5" rx="0.5" fill="rgba(184,146,42,0.35)" transform="rotate(225 35 88)"/>
+          <rect x="33.5" y="79" width="3" height="3.5" rx="0.5" fill="rgba(184,146,42,0.35)" transform="rotate(270 35 88)"/>
+          <rect x="33.5" y="79" width="3" height="3.5" rx="0.5" fill="rgba(184,146,42,0.35)" transform="rotate(315 35 88)"/>
+          <circle cx="35" cy="88" r="2" fill="rgba(184,146,42,0.35)"/>
+        </g>
+
+        <!-- 歯車9：右下小（新追加） -->
+        <g class="wg9">
+          <circle cx="148" cy="130" r="7" fill="rgba(20,16,10,0.95)" stroke="rgba(184,146,42,0.25)" stroke-width="0.5"/>
+          <rect x="146.5" y="122" width="3" height="3.5" rx="0.5" fill="rgba(184,146,42,0.3)"/>
+          <rect x="146.5" y="122" width="3" height="3.5" rx="0.5" fill="rgba(184,146,42,0.3)" transform="rotate(60 148 130)"/>
+          <rect x="146.5" y="122" width="3" height="3.5" rx="0.5" fill="rgba(184,146,42,0.3)" transform="rotate(120 148 130)"/>
+          <rect x="146.5" y="122" width="3" height="3.5" rx="0.5" fill="rgba(184,146,42,0.3)" transform="rotate(180 148 130)"/>
+          <rect x="146.5" y="122" width="3" height="3.5" rx="0.5" fill="rgba(184,146,42,0.3)" transform="rotate(240 148 130)"/>
+          <rect x="146.5" y="122" width="3" height="3.5" rx="0.5" fill="rgba(184,146,42,0.3)" transform="rotate(300 148 130)"/>
+          <circle cx="148" cy="130" r="2" fill="rgba(184,146,42,0.3)"/>
+        </g>
+      </g>
+
+            <!-- ── 前面オーバーレイ（静止）：鍵穴と外枠の重ね ── -->
+      <!-- 内枠リング（前面に重ねて内部をマスク感） -->
+      <circle cx="90" cy="90" r="76" fill="none" stroke="rgba(184,146,42,0.45)" stroke-width="1.5"/>
+      <!-- 鍵穴（前面） -->
+      <circle cx="90" cy="90" r="10" fill="rgba(8,6,4,0.97)" stroke="rgba(184,146,42,0.65)" stroke-width="1.2"/>
+      <rect   x="87" y="97" width="6" height="10" rx="1.5" fill="rgba(8,6,4,0.97)" stroke="rgba(184,146,42,0.65)" stroke-width="1.2"/>
+      <!-- 鍵穴の光沢 -->
+      <circle cx="88" cy="88" r="2" fill="rgba(184,146,42,0.15)"/>
+    </svg>
+  </div>
+
+  <p class="intro-hint" id="intro-hint">3回タッチしてください</p>
+</div>
+<div id="intro-glow"></div>
+<div id="intro-flash"></div>
+<canvas id="glitter-canvas"></canvas>
+<div class="lang-bar">
+  <button class="lang-btn active" id="btn-ja" onclick="switchLang('ja')">日本語</button>
+  <span class="lang-sep">/</span>
+  <button class="lang-btn" id="btn-en" onclick="switchLang('en')">English</button>
+</div>
+
+<nav>
+  <a href="#hero" class="nav-logo">Y<span>·</span>O<span>·</span>Y<span>·</span>O</a>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMenu()" aria-label="メニュー">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#profile" class="ja-text" onclick="closeMenu()">プロフィール</a><a href="#profile" class="en-text hidden" onclick="closeMenu()">Profile</a></li>
+    <li><a href="#strengths" class="ja-text" onclick="closeMenu()">強み</a><a href="#strengths" class="en-text hidden" onclick="closeMenu()">Strengths</a></li>
+    <li><a href="#reviews" class="ja-text" onclick="closeMenu()">お客様の声</a><a href="#reviews" class="en-text hidden" onclick="closeMenu()">Reviews</a></li>
+    <li><a href="#gallery" class="ja-text" onclick="closeMenu()">ギャラリー</a><a href="#gallery" class="en-text hidden" onclick="closeMenu()">Gallery</a></li>
+    <li><a href="#pricing" class="ja-text" onclick="closeMenu()">料金</a><a href="#pricing" class="en-text hidden" onclick="closeMenu()">Pricing</a></li>
+    <li><a href="#contact" class="ja-text" onclick="closeMenu()">お問い合わせ</a><a href="#contact" class="en-text hidden" onclick="closeMenu()">Contact</a></li>
+  </ul>
+</nav>
+
+<section id="hero">
+  <div class="hero-left">
+    <div class="ja-text">
+      <div class="hero-tag">MAGICIAN — TOKYO</div>
+      <h1>笑いから驚きまで、<br><em>言葉を超えた</em><br>マジックを。</h1>
+      <p class="hero-sub">yoyo（ヨーヨー）— Tokyo Based Magician</p>
+      <a href="#contact" class="hero-cta">このマジシャンを予約する <span class="hero-cta-arrow">→</span></a>
+    </div>
+    <div class="en-text hidden">
+      <div class="hero-tag">MAGICIAN — TOKYO</div>
+      <h1>From Laughter<br>to <em>Wonder</em>,<br>Beyond Words.</h1>
+      <p class="hero-sub">yoyo — Tokyo Based Magician</p>
+      <a href="#contact" class="hero-cta">Book This Magician <span class="hero-cta-arrow">→</span></a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img src="images/hero.jpg" alt="yoyo magician">
+  </div>
+  <div class="hero-sns">
+    <div class="hero-sns-line"></div>
+    <a href="https://www.instagram.com/magician_yoyo/" target="_blank" title="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg></a>
+    <a href="https://x.com/yoyo_magician" target="_blank" title="X" style="font-size:13px;font-family:sans-serif;">X</a>
+    <div class="hero-sns-line"></div>
+  </div>
+</section>
+
+<div class="banner fade-in">
+  <img class="banner-img" src="images/profile.jpg" alt="yoyo profile">
+  <div>
+    <div class="banner-label ja-text">ABOUT YOYO</div>
+    <div class="banner-label en-text hidden">ABOUT YOYO</div>
+    <h2 class="banner-title ja-text">場を読む力と、<br><em>言葉を超える</em>表現力。</h2>
+    <h2 class="banner-title en-text hidden">Reading the Room.<br><em>Transcending</em> Language.</h2>
+    <p class="banner-desc ja-text">幼少の頃よりマジックに魅せられ、六本木の魔法ダイニングバーOSMANDで店長を務めた後、独立。コメディからシリアスまで、その場の空気を読んだ演出が持ち味。留学経験を活かした英語対応で、国際的なゲストにも対応します。</p>
+    <p class="banner-desc en-text hidden">Captivated by magic since childhood, yoyo honed his craft at OSMAND — a celebrated magic dining bar in Roppongi — before launching independently. Fluent in English and equally at ease with comedy or refined illusion.</p>
+    <div class="banner-badges">
+      <span class="banner-badge ja-text">英語対応可</span>
+      <span class="banner-badge en-text hidden">Bilingual</span>
+      <span class="banner-badge ja-text">子ども向けショー</span>
+      <span class="banner-badge en-text hidden">Children's Shows</span>
+      <span class="banner-badge ja-text">コメディ〜シリアス</span>
+      <span class="banner-badge en-text hidden">Comedy to Serious</span>
+      <span class="banner-badge ja-text">企業・ウェディング対応</span>
+      <span class="banner-badge en-text hidden">Corporate & Weddings</span>
+    </div>
+  </div>
+</div>
+
+<!-- TV実績バー -->
+<div class="tv-bar fade-in">
+  <div class="tv-bar-inner">
+    <div class="tv-bar-label ja-text">MEDIA</div>
+    <div class="tv-bar-label en-text hidden">MEDIA</div>
+    <div class="tv-bar-items">
+      <div class="tv-item">TBS</div>
+      <div class="tv-sep">◆</div>
+      <div class="tv-item">テレビ東京</div>
+      <div class="tv-sep">◆</div>
+      <div class="tv-item ja-text">Snow Man共演</div>
+      <div class="tv-item en-text hidden">Snow Man Collab</div>
+      <div class="tv-sep">◆</div>
+      <div class="tv-item ja-text">演技指導補佐</div>
+      <div class="tv-item en-text hidden">Acting Coach</div>
+    </div>
+  </div>
+</div>
+
+<!-- 感情3ゾーン -->
+<section id="emotions">
+  <div class="section-inner">
+    <div class="section-header fade-in">
+      <div class="section-label">EXPERIENCE</div>
+      <h2 class="section-title ja-text">ひとつのショーで、<br>すべての感情を動かす。</h2>
+      <h2 class="section-title en-text hidden">One show.<br>Every emotion.</h2>
+    </div>
+    <div class="emotion-grid fade-in">
+      <div class="emotion-card">
+        <div class="emotion-img-wrap">
+          <img src="images/g4.jpg" alt="comedy" style="object-position:60% 15%;">
+        </div>
+        <div class="emotion-body">
+          <div class="emotion-tag ja-text">笑い</div>
+          <div class="emotion-tag en-text hidden">Laughter</div>
+          <div class="emotion-text ja-text">場の空気をほぐし、ゲスト全員を笑顔にする。コメディマジックで会場が一体になる瞬間。</div>
+          <div class="emotion-text en-text hidden">Warming up the room, drawing out smiles — comedy magic that unites everyone in the moment.</div>
+        </div>
+      </div>
+      <div class="emotion-card">
+        <div class="emotion-img-wrap">
+          <img src="images/g1.jpg" alt="wonder" style="object-position:center 10%;">
+        </div>
+        <div class="emotion-body">
+          <div class="emotion-tag ja-text">驚き</div>
+          <div class="emotion-tag en-text hidden">Wonder</div>
+          <div class="emotion-text ja-text">目を疑う瞬間、言葉を失う瞬間。その空白こそが、マジックの真髄。</div>
+          <div class="emotion-text en-text hidden">The moment eyes widen and words fail — that silence is where the magic truly lives.</div>
+        </div>
+      </div>
+      <div class="emotion-card">
+        <div class="emotion-img-wrap">
+          <img src="images/g6.jpg" alt="fire" style="object-position:center 15%;">
+        </div>
+        <div class="emotion-body">
+          <div class="emotion-tag ja-text">感動</div>
+          <div class="emotion-tag en-text hidden">Awe</div>
+          <div class="emotion-text ja-text">炎と光が交差する瞬間、非日常が訪れる。その体験は、ずっと記憶に残る。</div>
+          <div class="emotion-text en-text hidden">Flame, light, and the extraordinary collide — a memory that stays with guests long after the night ends.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3つの強み -->
+<section id="strengths">
+  <div class="section-inner">
+    <div class="section-header fade-in">
+      <div class="section-label">STRENGTHS</div>
+      <h2 class="section-title ja-text">yoyoだからできること</h2>
+      <h2 class="section-title en-text hidden">What sets yoyo apart</h2>
+    </div>
+    <div class="strength-grid fade-in">
+
+      <div class="strength-card">
+        <div class="strength-num">01</div>
+        <div class="strength-icon-wrap">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="18" stroke="rgba(184,146,42,0.4)" stroke-width="1"/>
+            <text x="20" y="25" text-anchor="middle" font-size="16" fill="#d4a83a" font-family="serif">EN</text>
+          </svg>
+        </div>
+        <h3 class="strength-title ja-text">英語対応可</h3>
+        <h3 class="strength-title en-text hidden">Bilingual Magic</h3>
+        <p class="strength-desc ja-text">留学経験を活かした自然な英語でのコミュニケーション。外国人ゲストが多い国際的なパーティーや企業イベントでも、言葉の壁を感じさせない演出が可能です。インターナショナルスクールでの実績も多数。</p>
+        <p class="strength-desc en-text hidden">Thanks to his study-abroad experience, yoyo performs naturally in English — no awkward transitions, no language barriers. Ideal for international parties, global corporate events, and international schools across Tokyo.</p>
+        <div class="strength-tags">
+          <span class="strength-tag ja-text">外資系企業</span>
+          <span class="strength-tag en-text hidden">Global Corporates</span>
+          <span class="strength-tag ja-text">インターナショナルスクール</span>
+          <span class="strength-tag en-text hidden">International Schools</span>
+          <span class="strength-tag ja-text">外国人ゲスト多数のパーティー</span>
+          <span class="strength-tag en-text hidden">Mixed-nationality Events</span>
+        </div>
+      </div>
+
+      <div class="strength-card">
+        <div class="strength-num">02</div>
+        <div class="strength-icon-wrap">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="20,4 24,14 35,14 26,21 29,32 20,25 11,32 14,21 5,14 16,14" stroke="rgba(184,146,42,0.4)" stroke-width="1" fill="none"/>
+            <circle cx="20" cy="20" r="4" fill="rgba(184,146,42,0.5)"/>
+          </svg>
+        </div>
+        <h3 class="strength-title ja-text">子ども向けショーの圧倒的な経験値</h3>
+        <h3 class="strength-title en-text hidden">Expert in Children's Shows</h3>
+        <p class="strength-desc ja-text">小さな子どもから小学生まで、年齢に合わせた演出と言葉選びで場を作ります。笑いと驚きを通じて子どもたちが目を輝かせる瞬間を作り続けてきた豊富な実績。ファミリーイベント・学校行事に最適。</p>
+        <p class="strength-desc en-text hidden">From toddlers to grade-schoolers, yoyo tailors every moment to the audience's age — with the right words, the right pace, and the right magic. Years of experience at family events and school performances across Tokyo.</p>
+        <div class="strength-tags">
+          <span class="strength-tag ja-text">ファミリーイベント</span>
+          <span class="strength-tag en-text hidden">Family Events</span>
+          <span class="strength-tag ja-text">学校・幼稚園行事</span>
+          <span class="strength-tag en-text hidden">School Events</span>
+          <span class="strength-tag ja-text">誕生日パーティー</span>
+          <span class="strength-tag en-text hidden">Birthday Parties</span>
+        </div>
+      </div>
+
+      <div class="strength-card">
+        <div class="strength-num">03</div>
+        <div class="strength-icon-wrap">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="5" y="5" width="30" height="30" stroke="rgba(184,146,42,0.4)" stroke-width="1"/>
+            <line x1="5" y1="20" x2="35" y2="20" stroke="rgba(184,146,42,0.25)" stroke-width="0.5"/>
+            <line x1="20" y1="5" x2="20" y2="35" stroke="rgba(184,146,42,0.25)" stroke-width="0.5"/>
+            <circle cx="20" cy="20" r="5" stroke="rgba(184,146,42,0.6)" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+        <h3 class="strength-title ja-text">コメディからシリアスまで、場を選ばない</h3>
+        <h3 class="strength-title en-text hidden">Any style. Any room.</h3>
+        <p class="strength-desc ja-text">カジュアルなホームパーティーから格式あるウェディング、企業の重役が集まる懇親会まで。その場の空気を瞬時に読み、コメディとシリアスを自在に使い分ける表現力がyoyoの最大の武器です。</p>
+        <p class="strength-desc en-text hidden">From casual house parties to black-tie weddings and executive receptions — yoyo reads the room instantly and shifts between comedy and refined illusion without missing a beat. Versatility is his greatest weapon.</p>
+        <div class="strength-tags">
+          <span class="strength-tag ja-text">ウェディング</span>
+          <span class="strength-tag en-text hidden">Weddings</span>
+          <span class="strength-tag ja-text">企業パーティー</span>
+          <span class="strength-tag en-text hidden">Corporate Events</span>
+          <span class="strength-tag ja-text">10名〜100名規模</span>
+          <span class="strength-tag en-text hidden">10 to 100+ guests</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- お客様の声 -->
+<section id="reviews">
+  <div class="section-inner">
+    <div class="section-header fade-in">
+      <div class="section-label">REVIEWS</div>
+      <h2 class="section-title ja-text">お客様の声</h2>
+      <h2 class="section-title en-text hidden">What Clients Say</h2>
+      <div class="review-badge">
+        <span class="review-badge-score">★ 4.95</span>
+        <span class="review-badge-text ja-text">くらしのマーケット 口コミ22件</span>
+        <span class="review-badge-text en-text hidden">22 verified reviews on Kurashi no Market</span>
+      </div>
+    </div>
+    <div class="review-grid fade-in">
+      <div class="review-card">
+        <div class="review-quote">◆</div>
+        <div class="review-text ja-text">子供の卒園パーティーで利用しました。子供慣れしており、子供の声に耳を傾けながらマジックをしてくれます。子供たちにも分かりやすいマジックをしてくれるのでみんな楽しんでくれました。利用前に要望を伝えてそれに対応してくれるので、不安を感じませんでした。</div>
+        <div class="review-text en-text hidden">Magician Yoyo did really great! He gave us a fun magic show with unbelievable tricks with cards and several things! We were naughty boys and parents, but he was willing to give us a show!</div>
+
+      </div>
+      <div class="review-card">
+        <div class="review-quote">◆</div>
+        <div class="review-text ja-text">今回子供向けに英語でマジックをお願いしました。英語もお上手で子供受け抜群のショータイムでした。ありがとうございました。</div>
+        <div class="review-text en-text hidden">We asked for a magic show in English for children. His English was excellent and the kids absolutely loved the show. Thank you so much!</div>
+
+      </div>
+      <div class="review-card">
+        <div class="review-quote">◆</div>
+        <div class="review-text ja-text">非常に丁寧な対応で子供から大人まで満足させられる手品を披露頂き、子供達には深く思い出に残る楽しい時間となりました。また機会があればお呼びしたいです！</div>
+        <div class="review-text en-text hidden">Exceptionally attentive — performed magic that satisfied everyone from kids to adults. The children were left with memories they'll never forget. We'd love to have him again!</div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="profile">
+  <div class="section-inner">
+    <div class="profile-grid fade-in">
+      <div>
+        <div class="section-header">
+          <div class="section-label">PROFILE</div>
+          <h2 class="section-title ja-text">マジシャン<br>yoyo（ヨーヨー）</h2>
+          <h2 class="section-title en-text hidden">Magician<br>yoyo</h2>
+        </div>
+        <div class="profile-text ja-text">
+          <p>幼少の頃よりマジックに魅せられ、六本木の魔法ダイニングバーOSMANDで店長を務めた後、独立。少人数のテーブルマジックから大規模パーティーまで、場の空気を読んだ演出が持ち味。</p>
+          <p>留学経験を活かした英語対応で、インターナショナルスクールや外資系イベントにも対応。コメディからシリアスまで、その場に合わせたスタイルで臨みます。</p>
+        </div>
+        <div class="profile-text en-text hidden">
+          <p>Captivated by magic since childhood, yoyo built his career at OSMAND before launching independently. Known for reading the room and crafting performances that feel tailor-made.</p>
+          <p>Fluent in English, yoyo performs seamlessly for international audiences at corporate events, international schools, weddings, and beyond.</p>
+        </div>
+        <div class="profile-badges">
+          <div class="profile-badge">
+            <div class="badge-diamond"></div>
+            <div>
+              <div class="badge-content-title ja-text">英語対応可</div>
+              <div class="badge-content-title en-text hidden">Bilingual Performance</div>
+              <div class="badge-content-desc ja-text">留学経験を活かし、外国人ゲストのいる場でも自然なコミュニケーションで演出します。</div>
+              <div class="badge-content-desc en-text hidden">Performs fluently in both Japanese and English, ensuring every guest feels part of the magic.</div>
+            </div>
+          </div>
+          <div class="profile-badge">
+            <div class="badge-diamond"></div>
+            <div>
+              <div class="badge-content-title ja-text">子ども向けショー</div>
+              <div class="badge-content-title en-text hidden">Children's Shows</div>
+              <div class="badge-content-desc ja-text">インターナショナルスクール・ファミリーイベントでの豊富な経験。笑顔と驚きを届けます。</div>
+              <div class="badge-content-desc en-text hidden">Extensive experience at international schools and family events, bringing joy and wonder to young audiences.</div>
+            </div>
+          </div>
+          <div class="profile-badge">
+            <div class="badge-diamond"></div>
+            <div>
+              <div class="badge-content-title ja-text">幅広いスタイル</div>
+              <div class="badge-content-title en-text hidden">Versatile Styles</div>
+              <div class="badge-content-desc ja-text">コメディからシリアスまで。ウェディング・企業パーティー・テーマパークなど多彩な場に対応。</div>
+              <div class="badge-content-desc en-text hidden">From playful comedy to refined close-up magic — weddings, corporate parties, theme parks, and more.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="position:relative;">
+        <img src="images/g2.jpg" alt="fire performance" style="width:100%;aspect-ratio:3/4;object-fit:cover;object-position:center 20%;">
+        <div style="position:absolute;bottom:1.2rem;left:1.2rem;right:1.2rem;background:rgba(26,21,16,0.65);padding:0.8rem 1rem;backdrop-filter:blur(4px);">
+          <div style="font-size:0.6rem;letter-spacing:0.18em;color:var(--gold);margin-bottom:0.2rem;">LIVE PERFORMANCE</div>
+          <div style="font-size:0.75rem;color:rgba(250,248,245,0.85);font-family:'Noto Serif JP',serif;" class="ja-text">火を使った迫力の演技も対応</div>
+          <div style="font-size:0.75rem;color:rgba(250,248,245,0.85);font-family:'Noto Serif JP',serif;" class="en-text hidden">Fire performance available on request</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section id="achievements">
+  <div class="section-inner">
+    <div class="section-header fade-in">
+      <div class="section-label">ACHIEVEMENTS</div>
+      <h2 class="section-title ja-text">主な出演実績</h2>
+      <h2 class="section-title en-text hidden">Selected Performances</h2>
+    </div>
+    <div class="fade-in">
+      <div class="achievement-item"><div class="achievement-label">MAGIC BAR</div><div class="achievement-name">魔法ダイニングバー OSMAND</div></div>
+      <div class="achievement-item"><div class="achievement-label">TV — テレビ東京</div><div class="achievement-name ja-text">『家、ついて行ってイイですか？』</div><div class="achievement-name en-text hidden">"Can I Follow You Home?" — TV Tokyo</div></div>
+      <div class="achievement-item"><div class="achievement-label">TV — TBS</div><div class="achievement-name ja-text">『それSnow Manにやらせて下さい』</div><div class="achievement-name en-text hidden">"Let Snow Man Do It" — TBS</div></div>
+      <div class="achievement-item"><div class="achievement-label">TV — TBS</div><div class="achievement-name ja-text">『夜のブランチ』（演技指導補佐）</div><div class="achievement-name en-text hidden">"Yoru no Brunch" — TBS (Acting Coach)</div></div>
+      <div class="achievement-item"><div class="achievement-label">VENUE</div><div class="achievement-name ja-text">銀座・六本木を中心に都内各所で活動</div><div class="achievement-name en-text hidden">Active in Ginza, Roppongi, and venues across Tokyo</div></div>
+      <div class="achievement-item"><div class="achievement-label">EVENT</div><div class="achievement-name ja-text">企業パーティー・ウェディング・テーマパーク 他</div><div class="achievement-name en-text hidden">Corporate Events · Weddings · Theme Parks &amp; more</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="section-header fade-in">
+    <div class="section-label">GALLERY</div>
+    <h2 class="section-title ja-text">ギャラリー</h2>
+    <h2 class="section-title en-text hidden">Gallery</h2>
+  </div>
+  <div class="gallery-grid fade-in">
+    <div class="gallery-item"><img src="images/g1.jpg" alt="gallery 1" style="object-position:center 10%;"></div>
+    <div class="gallery-item"><img src="images/g3.jpg" alt="gallery 2" style="object-position:center 10%;"></div>
+    <div class="gallery-item"><img src="images/g4.jpg" alt="gallery 3" style="object-position:center 10%;"></div>
+    <div class="gallery-item"><img src="images/g5.jpg" alt="gallery 4" style="object-position:center 10%;"></div>
+    <div class="gallery-item"><img src="images/g8.jpg" alt="gallery 5" style="object-position:center 20%;"></div>
+    <div class="gallery-item"><img src="images/g6.jpg" alt="gallery 6" style="object-position:center 15%;"></div>
+  </div>
+</section>
+
+<!-- 迷っている方へCTA -->
+<div class="mid-cta fade-in">
+  <div class="mid-cta-inner">
+    <div class="mid-cta-text ja-text">まずは、お気軽にご相談ください。</div>
+    <div class="mid-cta-text en-text hidden">Not sure yet? Just reach out — no commitment needed.</div>
+    <div class="mid-cta-sub ja-text">内容・規模・予算に合わせてご提案します。無料でご相談いただけます。</div>
+    <div class="mid-cta-sub en-text hidden">We'll tailor a proposal to your event, scale, and budget — free of charge.</div>
+    <a href="#contact" class="mid-cta-btn ja-text">無料で相談してみる →</a>
+    <a href="#contact" class="mid-cta-btn en-text hidden">Get a Free Quote →</a>
+  </div>
+</div>
+
+<section id="pricing">
+  <div class="section-inner">
+    <div class="section-header fade-in">
+      <div class="section-label">PRICING</div>
+      <h2 class="section-title ja-text">料金・プラン</h2>
+      <h2 class="section-title en-text hidden">Pricing</h2>
+    </div>
+    <div class="pricing-wrap fade-in">
+      <div class="price-card">
+        <div class="price-amount">¥25,000</div>
+        <div class="price-unit ja-text">〜 / 15分　基本料金（目安）</div>
+        <div class="price-unit en-text hidden">~ / 15 min · Starting rate (subject to change)</div>
+        <div class="price-factors">
+          <div class="price-factor"><div class="factor-mark"></div><div>
+            <div class="factor-info-name ja-text">お客様の人数</div>
+            <div class="factor-info-name en-text hidden">Number of guests</div>
+            <div class="factor-info-desc ja-text">ゲスト数・テーブル数によって対応規模が変わります</div>
+            <div class="factor-info-desc en-text hidden">Group size and number of tables affect the scope of performance.</div>
+          </div></div>
+          <div class="price-factor"><div class="factor-mark"></div><div>
+            <div class="factor-info-name ja-text">拘束時間</div>
+            <div class="factor-info-name en-text hidden">Total time on-site</div>
+            <div class="factor-info-desc ja-text">移動・準備・待機を含む現場滞在時間</div>
+            <div class="factor-info-desc en-text hidden">Includes travel, setup, and standby time at the venue.</div>
+          </div></div>
+          <div class="price-factor"><div class="factor-mark"></div><div>
+            <div class="factor-info-name ja-text">演技回数・内容</div>
+            <div class="factor-info-name en-text hidden">Type &amp; number of sets</div>
+            <div class="factor-info-desc ja-text">ステージ・テーブル・巡回など演出の種類と本数</div>
+            <div class="factor-info-desc en-text hidden">Stage shows, table magic, roaming — varies by style and quantity.</div>
+          </div></div>
+        </div>
+        <div class="price-note ja-text">※ 会場・内容・日程により異なります。まずはお気軽にご相談ください。<br>※ 交通費・機材費は別途ご相談</div>
+        <div class="price-note en-text hidden">※ Final pricing depends on venue, content, and date. Please feel free to reach out for a custom quote.<br>※ Travel and equipment costs billed separately.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-wrap">
+    <div class="section-header fade-in">
+      <div class="section-label">CONTACT</div>
+      <h2 class="section-title ja-text">お問い合わせ</h2>
+      <h2 class="section-title en-text hidden">Get in Touch</h2>
+    </div>
+    <p class="contact-desc fade-in ja-text">ご依頼・お見積もりはこちらからお気軽にどうぞ。内容をお聞きした上でご提案いたします。</p>
+    <p class="contact-desc fade-in en-text hidden">Feel free to reach out for bookings or enquiries. I'll get back to you with a personalised proposal.</p>
+    <form class="fade-in" onsubmit="handleSubmit(event)">
+      <div class="form-group">
+        <label class="form-label ja-text">お名前</label>
+        <label class="form-label en-text hidden">Your Name</label>
+        <input type="text" id="f-name" class="form-input" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label ja-text">メールアドレス</label>
+        <label class="form-label en-text hidden">Email Address</label>
+        <input type="email" id="f-email" class="form-input" placeholder="example@email.com" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label ja-text">イベントの種類</label>
+        <label class="form-label en-text hidden">Type of Event</label>
+        <input type="text" id="f-event" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label ja-text">ご質問・ご要望</label>
+        <label class="form-label en-text hidden">Message</label>
+        <textarea id="f-message" class="form-textarea"></textarea>
+      </div>
+      <button type="submit" class="form-submit">
+        <span class="ja-text">送信する</span>
+        <span class="en-text hidden">Send Message</span>
+      </button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Y · O · Y · O</div>
+  <p class="footer-text ja-text">© 2026 yoyo（ヨーヨー）. All rights reserved.</p>
+  <p class="footer-text en-text hidden">© 2026 yoyo. All rights reserved.</p>
+</footer>
+
+<script>
+  /* ── INTRO EFFECT ── */
+  (function(){
+    const ui      = document.getElementById('intro-ui');
+    const sigil   = document.getElementById('intro-sigil');
+    const hint    = document.getElementById('intro-hint');
+    const glow    = document.getElementById('intro-glow');
+    const flash   = document.getElementById('intro-flash');
+    const gCanvas = document.getElementById('glitter-canvas');
+    const bgCanvas= document.getElementById('intro-bg-canvas');
+    const gCtx    = gCanvas.getContext('2d');
+    const bgCtx   = bgCanvas.getContext('2d');
+    let W = window.innerWidth, H = window.innerHeight;
+
+    function resize(){
+      W = gCanvas.width = window.innerWidth;
+      H = gCanvas.height = window.innerHeight;
+      bgCanvas.width  = ui.offsetWidth  || W;
+      bgCanvas.height = ui.offsetHeight || H;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    /* 背景浮遊パーティクル */
+    const bgParts = Array.from({length:25}, ()=>({
+      x:Math.random()*W, y:Math.random()*H,
+      r:Math.random()*1.2+0.3, speed:Math.random()*0.22+0.05,
+      flicker:Math.random()*Math.PI*2,
+      color:Math.random()>0.5?'#c9a840':'#ffffff'
+    }));
+    let bgRunning = true;
+    (function bgLoop(){
+      if(!bgRunning) return;
+      bgCtx.clearRect(0,0,bgCanvas.width,bgCanvas.height);
+      bgParts.forEach(p=>{
+        p.y-=p.speed; p.flicker+=0.05;
+        if(p.y<-4) p.y=bgCanvas.height+4;
+        bgCtx.globalAlpha=0.1+0.35*Math.abs(Math.sin(p.flicker));
+        bgCtx.fillStyle=p.color;
+        bgCtx.beginPath(); bgCtx.arc(p.x,p.y,p.r,0,Math.PI*2); bgCtx.fill();
+      });
+      bgCtx.globalAlpha=1;
+      requestAnimationFrame(bgLoop);
+    })();
+
+    /* 歯車要素（加速対象） */
+    const gears = [
+      {el: sigil.querySelector('.wg1'), base:16},
+      {el: sigil.querySelector('.wg2'), base:11},
+      {el: sigil.querySelector('.wg3'), base: 8},
+      {el: sigil.querySelector('.wg4'), base: 6},
+      {el: sigil.querySelector('.wg5'), base:13},
+      {el: sigil.querySelector('.wg6'), base: 9},
+      {el: sigil.querySelector('.wg7'), base: 7},
+      {el: sigil.querySelector('.wg8'), base: 5},
+      {el: sigil.querySelector('.wg9'), base: 4},
+    ];
+
+    /* 3クリック判定 */
+    let clicks=0, activated=false;
+    // タッチデバイスかどうか判定してヒントテキストを更新
+    const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    hint.textContent = isTouch ? '3回タッチしてください' : '3回クリックしてください';
+
+    function handleTap(e) {
+      e.preventDefault();
+      if(activated) return;
+      clicks++;
+      sigil.style.filter=`drop-shadow(0 0 ${clicks*8}px rgba(255,255,255,${clicks*0.2}))`;
+      setTimeout(()=>{ sigil.style.filter=''; }, 300);
+      if(clicks===1) hint.textContent='あと2回...';
+      if(clicks===2) hint.textContent='あと1回...';
+      if(clicks>=3){ activated=true; startSequence(); }
+    }
+    // click（PC）とtouchend（スマホ）両方に登録
+    sigil.addEventListener('click', handleTap);
+    sigil.addEventListener('touchend', handleTap, {passive:false});
+
+    /* メインシーケンス */
+    function startSequence(){
+      bgRunning=false;
+      hint.style.transition='opacity 0.4s'; hint.style.opacity='0';
+
+      /* Phase1: 歯車を徐々に加速（0〜2.5s）
+         setIntervalで少しずつdurationを縮める → アクセレート感 */
+      const accelStart = performance.now();
+      const accelDur   = 2500; // 加速フェーズの長さ
+      const minDur     = 0.25; // 最終的な最小duration（秒）
+
+      let glowLevel = 0;
+
+      const accelInterval = setInterval(()=>{
+        const elapsed = performance.now() - accelStart;
+        const t = Math.min(elapsed / accelDur, 1);
+        // ease-in: 最初はゆっくり、どんどん加速
+        const ease = t * t * t;
+
+        gears.forEach(g=>{
+          if(!g.el) return;
+          const dur = g.base * (1 - ease * (1 - minDur/g.base));
+          g.el.style.animationDuration = dur + 's';
+        });
+
+        // 発光も徐々に強める（白）
+        glowLevel = ease;
+        sigil.querySelector('svg').style.filter =
+          `drop-shadow(0 0 ${glowLevel*16}px rgba(255,255,255,${glowLevel*0.7})) brightness(${1+glowLevel*0.8})`;
+
+        if(t >= 1){
+          clearInterval(accelInterval);
+          // Phase2: 白い光が画面全体へ
+          setTimeout(()=>{
+            sigil.classList.add('glow');
+            glow.classList.add('expand');
+
+            // 1.8s後 → ホワイトアウト
+            setTimeout(()=>{
+              flash.style.opacity='1';
+              // 0.8s後 → 霧が晴れる
+              setTimeout(()=>{
+                ui.classList.add('fadeout');
+                setTimeout(()=>{ ui.style.display='none'; glow.style.display='none'; },1100);
+                flash.style.transition='opacity 2.7s cubic-bezier(0.4,0,0.2,1)';
+                flash.style.opacity='0';
+                setTimeout(()=>{ flash.style.display='none'; },3600);
+                startGlitter();
+              }, 800);
+            }, 1800);
+          }, 200);
+        }
+      }, 50); // 50msごとに更新
+    }
+
+    /* グリッターパーティクル */
+    const glParts=[];
+    function spawnParticle(initPhase){
+      const rand=Math.random();
+      let type;
+      if(rand<0.25) type=0;
+      else if(rand<0.35) type=1;
+      else if(rand<0.96) type=2;
+      else type=3;
+      if(type===3&&glParts.filter(p=>p.type===3).length>=3) type=2;
+      const baseSize=Math.random()*4+0.8;
+      const size=baseSize*(Math.random()<0.15?1.8+Math.random()*0.6:1.0);
+      let ringR=0;
+      if(type===3) ringR=Math.random()<0.25?Math.min(W,H)*(0.2+Math.random()*0.07):30+Math.random()*60;
+      const mt=Math.random();
+      let vy,grav,vx;
+      if(mt<0.25){vy=(Math.random()-0.5)*0.15;grav=0.0005+Math.random()*0.001;vx=(Math.random()-0.5)*0.2;}
+      else if(mt<0.5){vy=Math.random()*0.8+0.2;grav=0.004+Math.random()*0.006;vx=(Math.random()-0.5)*0.5;}
+      else if(mt<0.75){vy=-(Math.random()*0.2);grav=0.006+Math.random()*0.008;vx=(Math.random()-0.5)*0.6;}
+      else{vy=-(Math.random()*0.3+0.05);grav=0.0008+Math.random()*0.002;vx=(Math.random()-0.5)*0.4;}
+      glParts.push({
+        x:Math.random()*W, y:initPhase?Math.random()*H:Math.random()*H*0.6,
+        vx,vy,grav,life:Math.random()*0.4+0.6,decay:0.006+Math.random()*0.005,
+        size,ringR,rot:Math.random()*Math.PI*2,rotSpeed:(Math.random()-0.5)*0.04,
+        type,hue:36+Math.random()*22,brightness:70+Math.random()*25,
+        phase:Math.random()*Math.PI*2,phaseSpeed:0.015+Math.random()*0.025,
+        ringAlpha:0.15+Math.random()*0.2,
+      });
+    }
+    function drawCross(x,y,r,rot){
+      gCtx.save();gCtx.translate(x,y);gCtx.rotate(rot);
+      const l=r*2.8,w=r*0.28;
+      gCtx.fillRect(-l/2,-w/2,l,w);gCtx.fillRect(-w/2,-l/2,w,l);gCtx.restore();
+    }
+    function drawDiamond(x,y,r,rot){
+      gCtx.save();gCtx.translate(x,y);gCtx.rotate(rot);
+      gCtx.beginPath();gCtx.moveTo(0,-r);gCtx.lineTo(r*0.52,0);gCtx.lineTo(0,r);gCtx.lineTo(-r*0.52,0);gCtx.closePath();gCtx.restore();
+    }
+    let glitterEndTime=null,glitterFading=false;
+    function startGlitter(){
+      gCanvas.classList.add('show');
+      glitterEndTime=performance.now()+8000;
+      for(let i=0;i<200;i++) spawnParticle(true);
+      requestAnimationFrame(glitterLoop);
+    }
+    function glitterLoop(now){
+      gCtx.clearRect(0,0,W,H);
+      if(now<glitterEndTime) for(let i=0;i<3;i++) spawnParticle(false);
+      for(let i=glParts.length-1;i>=0;i--){
+        const p=glParts[i];
+        p.phase+=p.phaseSpeed;p.vy+=p.grav;
+        p.x+=p.vx+Math.sin(p.phase)*0.3;p.y+=p.vy;
+        p.life-=p.decay;p.rot+=p.rotSpeed;
+        if(p.life<=0||p.y>H+30){glParts.splice(i,1);continue;}
+        const flicker=0.65+0.35*Math.sin(p.phase*2.5);
+        const alpha=Math.min(p.life*1.1,0.88)*flicker;
+        gCtx.save();
+        gCtx.globalAlpha=alpha;
+        gCtx.fillStyle='rgba(0,0,0,0)';gCtx.strokeStyle='rgba(0,0,0,0)';gCtx.shadowBlur=0;gCtx.lineWidth=1;
+        if(p.type===0){
+          const col=`hsl(${p.hue},82%,${p.brightness}%)`;
+          gCtx.fillStyle=col;gCtx.shadowColor=col;gCtx.shadowBlur=p.size*5;
+          gCtx.beginPath();gCtx.arc(p.x,p.y,p.size*0.55,0,Math.PI*2);gCtx.fill();
+        }else if(p.type===1){
+          gCtx.fillStyle='rgba(255,248,215,0.95)';gCtx.shadowColor='rgba(255,225,140,0.85)';gCtx.shadowBlur=p.size*7;
+          drawCross(p.x,p.y,p.size,p.rot);gCtx.fill();
+        }else if(p.type===2){
+          const col=`hsl(${p.hue+4},78%,${p.brightness+4}%)`;
+          gCtx.fillStyle=col;gCtx.shadowColor=col;gCtx.shadowBlur=p.size*6;
+          drawDiamond(p.x,p.y,p.size*1.15,p.rot);gCtx.fill();
+        }else{
+          const r=p.ringR,blur=Math.max(8,r*0.18),lw=Math.max(1.5,r*0.025),ra=alpha*p.ringAlpha;
+          gCtx.globalAlpha=ra*0.35;gCtx.strokeStyle=`hsl(${p.hue},65%,${p.brightness+18}%)`;
+          gCtx.shadowColor=`hsl(${p.hue},75%,${p.brightness+20}%)`;gCtx.shadowBlur=blur*2.5;gCtx.lineWidth=lw*2.5;
+          gCtx.beginPath();gCtx.arc(p.x,p.y,r,0,Math.PI*2);gCtx.stroke();
+          gCtx.globalAlpha=ra;gCtx.strokeStyle=`hsl(${p.hue},70%,${p.brightness+12}%)`;
+          gCtx.shadowColor=`hsl(${p.hue},80%,${p.brightness+18}%)`;gCtx.shadowBlur=blur;gCtx.lineWidth=lw;
+          gCtx.beginPath();gCtx.arc(p.x,p.y,r,0,Math.PI*2);gCtx.stroke();
+          gCtx.globalAlpha=ra*0.3;gCtx.shadowBlur=blur*0.5;gCtx.lineWidth=Math.max(0.5,lw*0.5);
+          gCtx.beginPath();gCtx.arc(p.x,p.y,r*0.82,0,Math.PI*2);gCtx.stroke();
+        }
+        gCtx.restore();
+      }
+      if(now>=glitterEndTime&&!glitterFading&&glParts.length<40){
+        glitterFading=true;gCanvas.classList.add('fadeout');
+        setTimeout(()=>{gCanvas.style.display='none';},2600);return;
+      }
+      if(!glitterFading||glParts.length>0) requestAnimationFrame(glitterLoop);
+    }
+  })();
+
+    // ハンバーガーメニュー
+  function toggleMenu() {
+    const btn   = document.getElementById('nav-hamburger');
+    const links = document.getElementById('nav-links');
+    btn.classList.toggle('open');
+    links.classList.toggle('open');
+    document.body.style.overflow = links.classList.contains('open') ? 'hidden' : '';
+  }
+  function closeMenu() {
+    const btn   = document.getElementById('nav-hamburger');
+    const links = document.getElementById('nav-links');
+    btn.classList.remove('open');
+    links.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  let currentLang = 'ja';
+  function switchLang(lang) {
+    currentLang = lang;
+    document.querySelectorAll('.ja-text').forEach(el => el.classList.toggle('hidden', lang !== 'ja'));
+    document.querySelectorAll('.en-text').forEach(el => el.classList.toggle('hidden', lang !== 'en'));
+    document.getElementById('btn-ja').classList.toggle('active', lang === 'ja');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.documentElement.lang = lang === 'ja' ? 'ja' : 'en';
+  }
+  const fadeEls = document.querySelectorAll('.fade-in');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(el => { if(el.isIntersecting) el.target.classList.add('visible'); });
+  }, {threshold:0.08});
+  fadeEls.forEach(el => observer.observe(el));
+  function handleSubmit(e) {
+    e.preventDefault();
+    const name    = document.getElementById('f-name').value;
+    const email   = document.getElementById('f-email').value;
+    const event   = document.getElementById('f-event').value;
+    const message = document.getElementById('f-message').value;
+
+    const subject = encodeURIComponent('【yoyo HP】お問い合わせ：' + (event || 'ご相談'));
+    const body = encodeURIComponent(
+      'お名前：' + name + '\n' +
+      'メールアドレス：' + email + '\n' +
+      'イベントの種類：' + event + '\n\n' +
+      'ご質問・ご要望：\n' + message
+    );
+
+    window.location.href = 'mailto:maasgdifcgihajn@gmail.com?subject=' + subject + '&body=' + body;
+
+    const btn = e.target.querySelector('.form-submit');
+    btn.innerHTML = currentLang === 'ja' ? 'メーラーが開きます。送信をお願いします。' : 'Your mail app will open. Please send the email.';
+    btn.style.background = 'var(--gold)';
+    btn.style.borderColor = 'var(--gold)';
+    btn.style.color = 'var(--white)';
+    btn.style.cursor = 'default';
+  }
+</script>
+</body>
+</html>
